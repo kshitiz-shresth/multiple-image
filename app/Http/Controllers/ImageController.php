@@ -11,7 +11,7 @@ class ImageController extends Controller
         $task = Task::find($request->taskID);
         $imageArray = json_decode($task->images);
 
-        // deleting image from array
+        // deleting image from array $imageName stores array of only image which will be deleted but, imageArray is new array without that image
         $imageName = array_splice($imageArray, $request->arrayID-1, 1);
 
         // deleting image from storage

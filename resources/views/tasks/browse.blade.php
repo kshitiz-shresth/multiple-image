@@ -18,6 +18,19 @@
 		font-family: 'Varela Round', sans-serif;
 		font-size: 13px;
 	}
+    .multiple-images{
+        display: flex;
+    }
+    .multiple-images span{
+        height: 50px;
+        width: 50px;
+        margin-right: 5px;
+        border: 2px #2196F3 solid;
+    }
+    .multiple-images span img{
+        height: 100%;
+        width: 100%;
+    }
 	.table-wrapper {
         background: #fff;
         padding: 20px 25px;
@@ -231,6 +244,9 @@
 	.modal form label {
 		font-weight: normal;
 	}
+    td.dataTables_empty {
+    text-align: center;
+    }
 </style>
 
   <body>
@@ -239,11 +255,10 @@
             <div class="table-title">
                 <div class="row">
                     <div class="col-sm-6">
-						<h2>Manage <b>Employees</b></h2>
+						<h2>Manage <b>Tasks</b></h2>
 					</div>
 					<div class="col-sm-6">
 						<a href="{{ route('tasks.create') }}" class="btn btn-success"><i class="material-icons">&#xE147;</i> <span>Add New Employee</span></a>
-						<a href="#deleteEmployeeModal" class="btn btn-danger" data-toggle="modal"><i class="material-icons">&#xE15C;</i> <span>Delete</span></a>
 					</div>
                 </div>
             </div>
@@ -264,8 +279,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($tasks as $item)
-
+                    @forelse ($tasks as $item)
                     <tr>
 						<td>
 							<span class="custom-checkbox">
@@ -276,111 +290,55 @@
                         <td>{{ $item->title }}</td>
                         <td>{{ $item->email }}</td>
 						<td>{{ $item->contact }}</td>
-                        <td>..</td>
+                        <td>
+                            @if($item->images && $item->images!='[]')
+                            <div class="multiple-images">
+                                @foreach (json_decode($item->images,true) as $image)
+                                    @if($loop->iteration==5)
+                                        @break
+                                    @endif
+                                    <span>
+                                        <img src="/image/{{ $image }}" alt="">
+                                    </span>
+                                @endforeach
+                            </div>
+                            @else
+                                No Images
+                            @endif
+                        </td>
                         <td>
                             <a href="{{ route('tasks.edit',$item->id) }}" class="edit"s><i class="material-icons" title="Edit">&#xE254;</i></a>
-                            <a href="#deleteEmployeeModal" class="delete" data-id="{{ $item->id }}" data-toggle="modal"><i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i></a>
+                            <a href="#" class="delete" onclick="deleteTask({{ $item->id }})"><i class="material-icons" data-toggle="tooltip" title="Delete">&#xE872;</i></a>
                         </td>
                     </tr>
-                    @endforeach
+                    @empty
+                    <tr>
+                        <td class="dataTables_empty" colspan="6">No Data Found</td>
+                    </tr>
+                    @endforelse
                 </tbody>
             </table>
-			<div class="clearfix">
-                <div class="hint-text">Showing <b>5</b> out of <b>25</b> entries</div>
-                <ul class="pagination">
-                    <li class="page-item disabled"><a href="#">Previous</a></li>
-                    <li class="page-item"><a href="#" class="page-link">1</a></li>
-                    <li class="page-item"><a href="#" class="page-link">2</a></li>
-                    <li class="page-item active"><a href="#" class="page-link">3</a></li>
-                    <li class="page-item"><a href="#" class="page-link">4</a></li>
-                    <li class="page-item"><a href="#" class="page-link">5</a></li>
-                    <li class="page-item"><a href="#" class="page-link">Next</a></li>
-                </ul>
-            </div>
         </div>
     </div>
-	<!-- Edit Modal HTML -->
-	<div id="addEmployeeModal" class="modal fade">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<form>
-					<div class="modal-header">
-						<h4 class="modal-title">Add Employee</h4>
-						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-					</div>
-					<div class="modal-body">
-						<div class="form-group">
-							<label>Name</label>
-							<input type="text" class="form-control" required>
-						</div>
-						<div class="form-group">
-							<label>Email</label>
-							<input type="email" class="form-control" required>
-						</div>
-						<div class="form-group">
-							<label>Address</label>
-							<textarea class="form-control" required></textarea>
-						</div>
-						<div class="form-group">
-							<label>Phone</label>
-							<input type="text" class="form-control" required>
-						</div>
-					</div>
-					<div class="modal-footer">
-						<input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
-						<input type="submit" class="btn btn-success" value="Add">
-					</div>
-				</form>
-			</div>
-		</div>
-	</div>
-
-	<!-- Delete Modal HTML -->
-	<div id="deleteEmployeeModal" class="modal fade">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<form>
-					<div class="modal-header">
-						<h4 class="modal-title">Delete Employee</h4>
-						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-					</div>
-					<div class="modal-body">
-						<p>Are you sure you want to delete these Records?</p>
-						<p class="text-warning"><small>This action cannot be undone.</small></p>
-					</div>
-					<div class="modal-footer">
-						<input type="button" class="btn btn-default" data-dismiss="modal" value="Cancel">
-						<input type="submit" class="btn btn-danger" value="Delete">
-					</div>
-				</form>
-			</div>
-		</div>
-	</div>
 </body>
 
 <script>
-    $(document).ready(function(){
-	// Activate tooltip
-	$('[data-toggle="tooltip"]').tooltip();
-
-	// Select/Deselect checkboxes
-	var checkbox = $('table tbody input[type="checkbox"]');
-	$("#selectAll").click(function(){
-		if(this.checked){
-			checkbox.each(function(){
-				this.checked = true;
-			});
-		} else{
-			checkbox.each(function(){
-				this.checked = false;
-			});
-		}
-	});
-	checkbox.click(function(){
-		if(!this.checked){
-			$("#selectAll").prop("checked", false);
-		}
-	});
-});
+    function deleteTask(taskID){
+        if (confirm("Are you sure?")) {
+            $.ajax({
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    url: `/tasks/${taskID}`,
+                    type: "DELETE",
+                    beforeSend: function () {
+                    },
+                    success: function(data){
+                        window.location.replace("{{ route('tasks.index') }}");
+                    }
+                });
+        }
+        return false;
+    }
 </script>
 </html>
