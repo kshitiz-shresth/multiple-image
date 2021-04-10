@@ -1,10 +1,10 @@
-Multiple Image Upload/Delete/Edit using laravel 8.
-No relationship will be used, Images will be stored as array on table.
+- Multiple Image Upload/Delete/Edit using laravel 8.
+- No relationship used, Images will be stored as array on table.
 
 
-##STEPS
+#STEPS
 - clone this project. 
-- remove .example from .env.example file where you setup your database and APP_URL
+- remove .example from .env.example file where you setup your database and APP_URL.
 - run `composer install` in command.
 - run `php artisan key:generate` in command.
 - run `php artisan migrate` in command. (Make sure you have link you app with database)
