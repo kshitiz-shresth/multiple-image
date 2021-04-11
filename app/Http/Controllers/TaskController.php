@@ -116,7 +116,7 @@ class TaskController extends Controller
     {
         $task = Task::find($id);
         // this will delete images from storage
-        if($task->image){
+        if($task->images){
             foreach(json_decode($task->images) as $item){
                 if(file_exists(public_path().'/image'.'/'.$item)){
                     unlink(public_path().'/image'.'/'.$item);
