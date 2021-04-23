@@ -15,8 +15,8 @@ class ImageController extends Controller
         $imageName = array_splice($imageArray, $request->arrayID-1, 1);
 
         // deleting image from storage
-        if(file_exists(public_path().'/image'.'/'.$imageName[0])){
-            unlink(public_path().'/image'.'/'.$imageName[0]);
+        if(file_exists(public_path().'/image'.'/'.$imageName[0]->name)){
+            unlink(public_path().'/image'.'/'.$imageName[0]->name);
         }
 
         $task->images = json_encode($imageArray);

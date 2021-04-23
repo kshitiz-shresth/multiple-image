@@ -45,13 +45,20 @@ class TaskController extends Controller
             foreach($files as $file){
                 $name = Str::random(20).'.'.$file->getClientOriginalExtension();
                 $file->move('image',$name);
-                $images[]=$name;
+                $images[]= [
+                    "name" => $name,
+                    "caption" => ''
+                ];
             }
         }
         if(isset($images)){
             $task->images = json_encode($images);
         }
         $task->save();
+
+        if(isset($request->submit_return)){
+            return redirect(route('tasks.edit',$task->id));
+        }
         return redirect(route('tasks.index'))->with('success','Done');
     }
 
@@ -91,18 +98,29 @@ class TaskController extends Controller
         $task->title  = $request->title;
         $task->email = $request->email;
         $task->contact = $request->contact;
-        $images = $task->images ? json_decode($task->images) : [];
+        $images = $task->images ? json_decode($task->images, true) : [];
+        if(count($images)>0){
+            for($i = 0; $i<count($images); $i++){
+                $images[$i]['caption'] = $request->captions[$i];
+            }
+        }
         if($files=$request->file('images')){
             foreach($files as $file){
                 $name = Str::random(20).'.'.$file->getClientOriginalExtension();
                 $file->move('image',$name);
-                $images[]=$name;
+                $images[]= [
+                    "name" => $name,
+                    "caption" => ''
+                ];
             }
         }
         if(isset($images)){
             $task->images = json_encode($images);
         }
         $task->update();
+        if(isset($request->submit_return)){
+            return redirect(route('tasks.edit',$task->id));
+        }
         return redirect(route('tasks.index'))->with('success','Updated Successfully');
     }
 

@@ -19,8 +19,9 @@
 <style>
     .multiple-images{
         display: flex;
+        flex-direction: column;
     }
-    .multiple-images span{
+    .multiple-images .images .single-image{
         height: 100px;
         width: 100px;
         margin-right: 4px;
@@ -31,9 +32,13 @@
         height: 100%;
         width: 100%;
     }
-    .multiple-images span .delete{
+    .multiple-images .images .single-image .delete{
         position: absolute;
         right: -1px;
+    }
+    .images{
+        display: flex;
+        align-items: center;
     }
 </style>
 <body>
@@ -49,20 +54,26 @@
             <label for="contact">Contact</label>
             <input class="form-control" type="number" value="{{ $task->contact }}" name="contact">
             <label for="images">Images</label>
-            @if($task->images)
+            @if(count(json_decode($task->images,true))>0)
             <div class="multiple-images">
                 @foreach (json_decode($task->images,true) as $item)
-                    <span>
-                        <img class="image" src="/image/{{ $item }}" alt="">
-                        <a onclick="deleteImage({{ $loop->iteration }},{{ $task->id }});" class="delete btn btn-danger"><i class="material-icons" data-toggle="tooltip" title="" data-original-title="Delete" aria-describedby="tooltip290885"></i></a>
-                    </span>
+                    <div class="images">
+                        <span class="single-image">
+                            <img class="image" src="/image/{{ $item['name'] }}" alt="">
+                            <a onclick="deleteImage({{ $loop->iteration }},{{ $task->id }});" class="delete btn btn-danger"><i class="material-icons" data-toggle="tooltip" title="" data-original-title="Delete" aria-describedby="tooltip290885"></i></a>
+                        </span>
+                        <span>
+                            <input placeholder="Caption Here" class="form-control" type="text" value="{{ $item['caption'] }}"  name="captions[]">
+                        </span>
+                    </div>
                 @endforeach
             </div>
             @endif
             <input class="form-control" type="file" name="images[]" multiple>
             <br>
-            <button type="submit" class="btn btn-success">Submit</button>
-
+            <a href="{{ route('tasks.index') }}" class="btn btn-info">Back</a>
+            <button type="submit" name="submit_return" value="1" class="btn btn-primary">Submit & Return</button>
+            <button type="submit" name="submit" value="1" class="btn btn-success">Submit</button>
         </form>
     </div>
 </body>

@@ -298,7 +298,7 @@
                                         @break
                                     @endif
                                     <span>
-                                        <img src="/image/{{ $image }}" alt="">
+                                        <img src="/image/{{ $image['name'] }}" alt="">
                                     </span>
                                 @endforeach
                             </div>

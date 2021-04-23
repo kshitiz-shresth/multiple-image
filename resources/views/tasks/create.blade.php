@@ -30,8 +30,9 @@
             <label for="images">Images</label>
             <input class="form-control" type="file" name="images[]" multiple>
             <br>
-            <button class="btn btn-success">Submit</button>
-
+            <a href="{{ route('tasks.index') }}" class="btn btn-info">Back</a>
+            <button type="submit" name="submit_return" value="1" class="btn btn-primary">Submit & Return</button>
+            <button type="submit" name="submit" value="1" class="btn btn-success">Submit</button>
         </form>
     </div>
 </body>
